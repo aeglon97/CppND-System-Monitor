@@ -35,25 +35,6 @@ string ParseForKey(std::string myKey, std::string path) {
 // DONE: An example of how to read data from the filesystem
 string LinuxParser::OperatingSystem() {
   return ParseForKey("PRETTY_NAME", kOSPath);
-  // string line;
-  // string key;
-  // string value;
-  // std::ifstream filestream(kOSPath);
-  // if (filestream.is_open()) {
-  //   while (std::getline(filestream, line)) {
-  //     std::replace(line.begin(), line.end(), ' ', '_');
-  //     std::replace(line.begin(), line.end(), '=', ' ');
-  //     std::replace(line.begin(), line.end(), '"', ' ');
-  //     std::istringstream linestream(line);
-  //     while (linestream >> key >> value) {
-  //       if (key == "PRETTY_NAME") {
-  //         std::replace(value.begin(), value.end(), '_', ' ');
-  //         return value;
-  //       }
-  //     }
-  //   }
-  // }
-  // return value;
 }
 
 // DONE: An example of how to read data from the filesystem
@@ -92,7 +73,7 @@ vector<int> LinuxParser::Pids() {
 // TODO: Read and return the system memory utilization
 float LinuxParser::MemoryUtilization() { 
   string line, key, value, kb;
-  float memtotal, memfree;
+  float memtotal, memfree, memutil;
   std::ifstream stream(kProcDirectory + kMeminfoFilename);
   if (stream.is_open()) {
     while(std::getline(stream, line)) {
@@ -100,7 +81,7 @@ float LinuxParser::MemoryUtilization() {
       std::istringstream linestream(line);
       while (linestream >> key >> value) {
         if (memtotal != 0 && memfree != 0) {
-          return (memtotal - memfree) / memtotal;
+          memutil = (memtotal - memfree) / memtotal;
         }
         if(key == "MemTotal") {
           memtotal = stof(value);
@@ -111,7 +92,7 @@ float LinuxParser::MemoryUtilization() {
       }
     }
   }
-    return 0.0; 
+  return memutil; 
 }
 
 // TODO: Read and return the system uptime
@@ -146,7 +127,21 @@ vector<string> LinuxParser::CpuUtilization() { return {}; }
 // TODO: Read and return the total number of processes
 
 
-int LinuxParser::TotalProcesses() { return 0; }
+int LinuxParser::TotalProcesses() {
+  string line, key, value;
+  std::ifstream filestream(kProcDirectory + kStatFilename); 
+    if (filestream.is_open()) {
+      while (std::getline(filestream, line)) {
+        std::istringstream linestream(line);
+        while (linestream >> key >> value) {
+          if (key == "processes") {
+            return std::stoi(value);
+        }
+      }
+    }
+  }
+  return std::stoi(value);
+}
 
 // TODO: Read and return the number of running processes
 int LinuxParser::RunningProcesses() { return 0; }
