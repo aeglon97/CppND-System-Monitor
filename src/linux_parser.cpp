@@ -11,10 +11,28 @@ using std::string;
 using std::to_string;
 using std::vector;
 
-// Helper function to parse a file, return value of argument
-string ParseForKey(std::string myKey, std::string path) {
+//Helper function: parse file for key value pairs
+string ParseAndRetrieve (std::string path, std::string myKey) {
   string line, key, value;
   std::ifstream filestream(path); 
+    if (filestream.is_open()) {
+      while (std::getline(filestream, line)) {
+        std::istringstream linestream(line);
+        while (linestream >> key >> value) {
+          if (key == myKey) {
+            return value;
+        }
+      }
+    }
+  }
+  return value;
+
+}
+
+// DONE: An example of how to read data from the filesystem
+string LinuxParser::OperatingSystem() {
+  string line, key, value;
+  std::ifstream filestream(kOSPath); 
     if (filestream.is_open()) {
       while (std::getline(filestream, line)) {
         std::replace(line.begin(), line.end(), ' ', '_');
@@ -22,7 +40,7 @@ string ParseForKey(std::string myKey, std::string path) {
         std::replace(line.begin(), line.end(), '"', ' ');
         std::istringstream linestream(line);
         while (linestream >> key >> value) {
-          if (key == myKey) {
+          if (key == "PRETTY_NAME") {
             std::replace(value.begin(), value.end(), '_', ' ');
             return value;
         }
@@ -30,11 +48,6 @@ string ParseForKey(std::string myKey, std::string path) {
     }
   }
   return value;
-}
-
-// DONE: An example of how to read data from the filesystem
-string LinuxParser::OperatingSystem() {
-  return ParseForKey("PRETTY_NAME", kOSPath);
 }
 
 // DONE: An example of how to read data from the filesystem
@@ -125,26 +138,14 @@ long LinuxParser::IdleJiffies() { return 0; }
 vector<string> LinuxParser::CpuUtilization() { return {}; }
 
 // TODO: Read and return the total number of processes
-
-
 int LinuxParser::TotalProcesses() {
-  string line, key, value;
-  std::ifstream filestream(kProcDirectory + kStatFilename); 
-    if (filestream.is_open()) {
-      while (std::getline(filestream, line)) {
-        std::istringstream linestream(line);
-        while (linestream >> key >> value) {
-          if (key == "processes") {
-            return std::stoi(value);
-        }
-      }
-    }
-  }
-  return std::stoi(value);
+  return std::stoi(ParseAndRetrieve(kProcDirectory + kStatFilename, "processes"));
 }
 
 // TODO: Read and return the number of running processes
-int LinuxParser::RunningProcesses() { return 0; }
+int LinuxParser::RunningProcesses() {
+  return std::stoi(ParseAndRetrieve(kProcDirectory + kStatFilename, "procs_running"));
+}
 
 // TODO: Read and return the command associated with a process
 // REMOVE: [[maybe_unused]] once you define the function
