@@ -11,27 +11,49 @@ using std::string;
 using std::to_string;
 using std::vector;
 
-// DONE: An example of how to read data from the filesystem
-string LinuxParser::OperatingSystem() {
-  string line;
-  string key;
-  string value;
-  std::ifstream filestream(kOSPath);
-  if (filestream.is_open()) {
-    while (std::getline(filestream, line)) {
-      std::replace(line.begin(), line.end(), ' ', '_');
-      std::replace(line.begin(), line.end(), '=', ' ');
-      std::replace(line.begin(), line.end(), '"', ' ');
-      std::istringstream linestream(line);
-      while (linestream >> key >> value) {
-        if (key == "PRETTY_NAME") {
-          std::replace(value.begin(), value.end(), '_', ' ');
-          return value;
+// Helper function to parse a file, return value of argument
+string ParseForKey(std::string myKey, std::string path) {
+  string line, key, value;
+  std::ifstream filestream(path); 
+    if (filestream.is_open()) {
+      while (std::getline(filestream, line)) {
+        std::replace(line.begin(), line.end(), ' ', '_');
+        std::replace(line.begin(), line.end(), '=', ' ');
+        std::replace(line.begin(), line.end(), '"', ' ');
+        std::istringstream linestream(line);
+        while (linestream >> key >> value) {
+          if (key == myKey) {
+            std::replace(value.begin(), value.end(), '_', ' ');
+            return value;
         }
       }
     }
   }
   return value;
+}
+
+// DONE: An example of how to read data from the filesystem
+string LinuxParser::OperatingSystem() {
+  return ParseForKey("PRETTY_NAME", kOSPath);
+  // string line;
+  // string key;
+  // string value;
+  // std::ifstream filestream(kOSPath);
+  // if (filestream.is_open()) {
+  //   while (std::getline(filestream, line)) {
+  //     std::replace(line.begin(), line.end(), ' ', '_');
+  //     std::replace(line.begin(), line.end(), '=', ' ');
+  //     std::replace(line.begin(), line.end(), '"', ' ');
+  //     std::istringstream linestream(line);
+  //     while (linestream >> key >> value) {
+  //       if (key == "PRETTY_NAME") {
+  //         std::replace(value.begin(), value.end(), '_', ' ');
+  //         return value;
+  //       }
+  //     }
+  //   }
+  // }
+  // return value;
 }
 
 // DONE: An example of how to read data from the filesystem
@@ -122,6 +144,8 @@ long LinuxParser::IdleJiffies() { return 0; }
 vector<string> LinuxParser::CpuUtilization() { return {}; }
 
 // TODO: Read and return the total number of processes
+
+
 int LinuxParser::TotalProcesses() { return 0; }
 
 // TODO: Read and return the number of running processes
