@@ -13,11 +13,6 @@ using std::vector;
 
 Process::Process(const int pid) : pid_(pid) {}
 
-//give way to set this process's Pid
-void Process::SetPid(int pid) {
-    pid_ = pid;
-}
-
 // TODO: Return this process's ID
 int Process::Pid() { 
     return pid_;
@@ -27,7 +22,7 @@ int Process::Pid() {
 float Process::CpuUtilization() { return 0.00; }
 
 // TODO: Return the command that generated this process
-string Process::Command() { return string(); }
+string Process::Command() { return LinuxParser::Command(pid_); }
 
 // TODO: Return this process's memory utilization
 string Process::Ram() { return string(); }
