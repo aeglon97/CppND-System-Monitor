@@ -160,36 +160,40 @@ string LinuxParser::Command(int pid) {
     std::getline(filestream, line);
     return line;
     }
-  return "nothing";
+  return line;
 }
 // TODO: Read and return the memory used by a process
 // REMOVE: [[maybe_unused]] once you define the function
-string LinuxParser::Ram(int pid[[maybe_unused]]) { return string(); }
+string LinuxParser::Ram(int pid) {
+  string ram = ParseAndRetrieve(kProcProcessDirectory + to_string(pid) + kStatusFilename, "VmSize");
+  return to_string(stof(ram) / 100);
+ }
 
 // TODO: Read and return the user ID associated with a process
 // REMOVE: [[maybe_unused]] once you define the function
-string LinuxParser::Uid(int pid[[maybe_unused]]) { 
-  string uid = ParseAndRetrieve(kProcProcessDirectory + to_string(pid) + kStatusFilename, "Uid ");
+string LinuxParser::Uid(int pid) { 
+  const string uid = ParseAndRetrieve(kProcProcessDirectory + to_string(pid) + kStatusFilename, "Uid ");
   return uid;
  }
 
 // TODO: Read and return the user associated with a process
 // REMOVE: [[maybe_unused]] once you define the function
-string LinuxParser::User(int pid[[maybe_unused]]) {
-  string line, username, x, uid;
-  string myuid = Uid(pid);
+string LinuxParser::User(int pid) {
+  string line, username, uid;
+  const string myuid = Uid(pid);
 
   std::ifstream stream(kPasswordPath);
   if (stream.is_open()) {
     while(std::getline(stream, line)) {
       std::replace(line.begin(), line.end(), ':', ' ');
+      std::replace(line.begin(), line.end(), 'x', ' ');
       std::istringstream linestream(line);
-      while (linestream >> username >> x >> uid) {
-        if (uid == myuid) { return username; }
+      while (linestream >> username >> uid) {
+        if (myuid == uid) { return username; }
       }
     }
   }
-  return "fuck";
+  return username;
 }
 
 // TODO: Read and return the uptime of a process
