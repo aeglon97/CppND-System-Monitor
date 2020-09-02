@@ -7,24 +7,23 @@
 #include <assert.h>
 #include <iomanip>
 
-
 using namespace std;
-map<string, int> MapUtilizationTimes();
+
+//Function definitions
+map<string, int> MapProcInfo();
 float CalculateUtilization(map<string, int> prev_map, map<string, int> map);
 
-// TODO: Return the aggregate CPU utilization
+//Return the aggregate CPU utilization
 float Processor::Utilization() { 
-    //store prev and current values
-    map<std::string, int> prev_map = MapUtilizationTimes();
+    map<std::string, int> prev_map = MapProcInfo();
     sleep(1.00);
-    map<std::string, int> map = MapUtilizationTimes();
+    map<std::string, int> map = MapProcInfo();
 
-    //calculate CPU usage percentage
     return CalculateUtilization(prev_map, map);
 }
 
 //Parse line into a hash table with processor info
-map<string, int> MapUtilizationTimes() {
+map<string, int> MapProcInfo() {
     map<string, int> result;
 
     string line, cpu;
