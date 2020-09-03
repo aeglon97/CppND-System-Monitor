@@ -22,7 +22,7 @@ System::System() {
 
 Processor& System::Cpu() { return cpu_; }
 
-//Update and sort container of processes
+//Update and sort container of system's processes
 void System::SetProcesses() {
     for (int pid : LinuxParser::Pids()) {
         processes_.push_back(Process(pid));
@@ -35,20 +35,14 @@ vector<Process>& System::Processes() {
     return processes_;
 }
 
-//Return the system's kernel identifier
 std::string System::Kernel() { return LinuxParser::Kernel(); }
 
-//Return the system's memory utilization
 float System::MemoryUtilization() { return LinuxParser::MemoryUtilization(); }
 
-//Return the operating system name
 std::string System::OperatingSystem() { return  LinuxParser::OperatingSystem();}
 
-//Return the number of processes actively running on the system
 int System::RunningProcesses() { return LinuxParser::RunningProcesses(); }
 
-//Return the total number of processes on the system
 int System::TotalProcesses() { return LinuxParser::TotalProcesses(); }
 
-//Return the number of seconds since the system started running
 long int System::UpTime() { return LinuxParser::UpTime(); }

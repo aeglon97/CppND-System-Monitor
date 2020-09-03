@@ -19,10 +19,8 @@ Process::Process(const int pid) : pid_(pid) {
     cpu_utilization_ = CpuUtilization();
 }
 
-//Return this process's ID
 int Process::Pid() { return pid_; }
 
-//Return this process's CPU utilization
 float Process::CpuUtilization() {
     float Hertz = sysconf(_SC_CLK_TCK);
     float total_time = utime_ + stime_;
@@ -37,16 +35,12 @@ float Process::CpuUtilization() {
     return (total_time / Hertz) / seconds;
  }
 
-//Return the command that generated this process
 string Process::Command() { return LinuxParser::Command(pid_); }
 
-//Return this process's memory utilization
 float Process::Ram() { return LinuxParser::Ram(pid_); }
 
-//Return the user (name) that generated this process
 string Process::User() { return LinuxParser::User(pid_); }
 
-//Return the age of this process (in seconds)
 long int Process::UpTime() { return LinuxParser::UpTime(pid_); }
 
 //Sort processes by descending CPU utilization
@@ -67,6 +61,7 @@ vector<string> Process::RetrieveCpuValues() {
     return cpu_values;
 }
 
+//Set this process's CPU values upon initialization
 void Process::SetCpuValues() {
     vector<string> cpu_values = RetrieveCpuValues();
     utime_ = stof(cpu_values[13]);

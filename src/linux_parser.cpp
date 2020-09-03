@@ -102,7 +102,6 @@ vector<int> LinuxParser::Pids() {
   return pids;
 }
 
-//Read and return the system memory utilization
 float LinuxParser::MemoryUtilization() { 
   string line, key, value, kb;
   float memtotal, memfree, memutil;
@@ -128,7 +127,6 @@ float LinuxParser::MemoryUtilization() {
   return memutil; 
 }
 
-//Read and return the system uptime
 long LinuxParser::UpTime() { 
   long uptime, idletime;
   string line;
@@ -158,13 +156,11 @@ vector<string> LinuxParser::CpuUtilization() {
   return {}; 
 }
 
-//Read and return the total number of processes
 int LinuxParser::TotalProcesses() {
   int total_processes = ParseValueByKey<int>(kProcDirectory + kStatFilename, "processes");
   return total_processes;
 }
 
-//Read and return the number of running processes
 int LinuxParser::RunningProcesses() {
   int running_processes = ParseValueByKey<int>(kProcDirectory + kStatFilename, "procs_running");
   return running_processes;
@@ -172,7 +168,6 @@ int LinuxParser::RunningProcesses() {
 
 //PROCESSES 
 
-//Read and return the command associated with a process
 string LinuxParser::Command(const int pid) { 
   string line;
   std::ifstream filestream(kProcProcessDirectory + to_string(pid) + kCmdlineFilename); 
@@ -183,20 +178,17 @@ string LinuxParser::Command(const int pid) {
   return line;
 }
 
-//Read and return the memory used by a process
 float LinuxParser::Ram(const int pid) {
   float ram_kb = ParseValueByKey<float>(kProcProcessDirectory + to_string(pid) + kStatusFilename, "VmSize");
   float ram_mb = KbToMb(ram_kb);
   return ram_mb;
  }
 
-//Read and return the user ID associated with a process
 string LinuxParser::Uid(const int pid) { 
   const string uid = ParseValueByKey<string>(kProcProcessDirectory + to_string(pid) + kStatusFilename, "Uid");
   return uid;
  }
 
-//Read and return the user associated with a process
 string LinuxParser::User(const int pid) {
   string line, username, x, uid;
   const string myuid = Uid(pid);
@@ -214,7 +206,6 @@ string LinuxParser::User(const int pid) {
   return username;
 }
 
-//Read and return the uptime of a process
 long int LinuxParser::UpTime(const int pid) {
   long unsigned int uptime;
 
