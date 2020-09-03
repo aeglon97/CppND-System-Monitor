@@ -180,22 +180,21 @@ string LinuxParser::Ram(int pid) {
 
 //Read and return the user ID associated with a process
 string LinuxParser::Uid(int pid) { 
-  const string uid = ParseAndRetrieve(kProcProcessDirectory + to_string(pid) + kStatusFilename, "Uid ");
+  const string uid = ParseAndRetrieve(kProcProcessDirectory + to_string(pid) + kStatusFilename, "Uid");
   return uid;
  }
 
 //Read and return the user associated with a process
 string LinuxParser::User(int pid) {
-  string line, username, uid;
+  string line, username, x, uid;
   const string myuid = Uid(pid);
-
   std::ifstream stream(kPasswordPath);
+
   if (stream.is_open()) {
     while(std::getline(stream, line)) {
       std::replace(line.begin(), line.end(), ':', ' ');
-      std::replace(line.begin(), line.end(), 'x', ' ');
       std::istringstream linestream(line);
-      while (linestream >> username >> uid) {
+      while (linestream >> username >> x >> uid) {
         if (myuid == uid) { return username; }
       }
     }
@@ -205,7 +204,7 @@ string LinuxParser::User(int pid) {
 
 //Read and return the uptime of a process
 long int LinuxParser::UpTime(int pid) {
-  long int uptime;
+  long unsigned int uptime;
   int index = 0;
 
   string line;
@@ -213,21 +212,13 @@ long int LinuxParser::UpTime(int pid) {
   
   if(stream.is_open()) {
     std::getline(stream, line);
-    // string token;
-    // while(std::getline(stream, token, ' ')) {
-    //   index++;
-    //   if (index == 22) {
-    //     uptime = stol(token);
-    //     break;
-    //   }
-    // }
   }
 
   std::istringstream buffer(line);
   std::istream_iterator<string> beg(buffer), end;
   vector<string> proc_stat_values(beg, end);
 
+  //Convert from clock ticks to seconds
   uptime = stol(proc_stat_values[21]) / sysconf(_SC_CLK_TCK);
-  // uptime /= sysconf(_SC_CLK_TCK);
   return uptime;
 }
