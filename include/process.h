@@ -35,6 +35,7 @@ class Process {
   float cutime_;
   float cstime_;
   float starttime_;
+  float cpu_utilization_;
 };
 
 #endif

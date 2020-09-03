@@ -15,6 +15,7 @@ using std::vector;
 
 Process::Process(const int pid) : pid_(pid) {
     SetCpuValues();
+    cpu_utilization_ = CpuUtilization();
 }
 
 // TODO: Return this process's ID
@@ -50,8 +51,8 @@ long int Process::UpTime() { return LinuxParser::UpTime(pid_); }
 
 // TODO: Overload the "less than" comparison operator for Process objects
 // REMOVE: [[maybe_unused]] once you define the function
-bool Process::operator<(Process const& a[[maybe_unused]]) const { 
-    return true; 
+bool Process::operator<(Process const& a) const { 
+    return this->cpu_utilization_ > a.cpu_utilization_;
 }
 
 //Store /proc/[pid]/stat values in vector
@@ -79,4 +80,3 @@ void Process::SetCpuValues() {
     cstime_ = stof(cpu_values[16]);
     starttime_ = stof(cpu_values[21]);
 }
-

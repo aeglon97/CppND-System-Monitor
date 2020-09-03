@@ -84,7 +84,6 @@ vector<int> LinuxParser::Pids() {
     }
   }
   closedir(directory);
-  random_shuffle(pids.begin(), pids.end());
   return pids;
 }
 
