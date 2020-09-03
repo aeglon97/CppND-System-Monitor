@@ -60,6 +60,15 @@ string LinuxParser::OperatingSystem() {
   return value;
 }
 
+//Split string by whitespace into a vector
+vector<string> LinuxParser::SplitLine(string line) {
+  std::istringstream buffer(line);
+  std::istream_iterator<string> beg(buffer), end;
+  vector<string> tokens(beg, end);
+
+  return tokens;
+}
+
 string LinuxParser::Kernel() {
   string os, version, kernel;
   string line;
@@ -211,11 +220,11 @@ long int LinuxParser::UpTime(int pid) {
     std::getline(stream, line);
   }
 
-  std::istringstream buffer(line);
-  std::istream_iterator<string> beg(buffer), end;
-  vector<string> proc_stat_values(beg, end);
+  vector<string> proc_stat_values = SplitLine(line);
 
   //Convert from clock ticks to seconds
   uptime = stol(proc_stat_values[21]) / sysconf(_SC_CLK_TCK);
   return uptime;
 }
+
+
