@@ -1,13 +1,14 @@
-#include <unistd.h>
-#include <cctype>
+#include <iterator>
 #include <sstream>
+#include <cctype>
 #include <string>
 #include <vector>
-#include <assert.h>
-#include <iterator>
 
-#include "process.h"
+#include <unistd.h>
+
 #include "linux_parser.h"
+#include "process.h"
+
 
 using std::string;
 using std::to_string;
@@ -68,7 +69,6 @@ vector<string> Process::RetrieveCpuValues() {
 
 void Process::SetCpuValues() {
     vector<string> cpu_values = RetrieveCpuValues();
-    assert(!cpu_values.empty());
     utime_ = stof(cpu_values[13]);
     stime_ = stof(cpu_values[14]);
     cutime_ = stof(cpu_values[15]);

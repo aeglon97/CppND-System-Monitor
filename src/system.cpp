@@ -1,12 +1,13 @@
-#include <unistd.h>
 #include <cstddef>
-#include <set>
 #include <string>
 #include <vector>
+#include <set>
+
+#include <unistd.h>
 
 #include "linux_parser.h"
-#include "process.h"
 #include "processor.h"
+#include "process.h"
 #include "system.h"
 
 using std::set;

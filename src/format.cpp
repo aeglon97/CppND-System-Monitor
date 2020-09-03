@@ -1,9 +1,11 @@
-#include <string>
 #include <iomanip>
+#include <string>
+
+
 #include "format.h"
 
-using namespace std;
-using std::string;
+using std::fixed;
+using std::setprecision;
 
 // INPUT: Long int measuring seconds
 // OUTPUT: HH:MM:SS
@@ -20,7 +22,7 @@ string Format::ElapsedTime(long seconds) {
 
 //Round to 2 decimal places
 string Format::RoundedFloat(float num) {
-    std::stringstream stream;
-    stream << std::fixed << std::setprecision(2) << num;
+    stringstream stream;
+    stream << fixed << setprecision(2) << num;
     return stream.str();
 }

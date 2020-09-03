@@ -1,14 +1,13 @@
-#include <dirent.h>
-#include <unistd.h>
+#include <experimental/filesystem>
+#include <iostream>
+#include <iomanip>
+#include <fstream>
 #include <string>
 #include <vector>
-#include <iostream>
-#include <assert.h>
 #include <map>
-#include <iomanip>
-#include <experimental/filesystem>
-#include <fstream>
-#include <iostream>
+
+#include <dirent.h>
+#include <unistd.h>
 
 #include "linux_parser.h"
 
