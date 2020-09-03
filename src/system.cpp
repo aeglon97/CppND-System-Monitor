@@ -15,18 +15,23 @@ using std::size_t;
 using std::string;
 using std::vector;
 
+//Set system processes upon initialization
+System::System() {
+    SetProcesses();
+}
+
 Processor& System::Cpu() { return cpu_; }
+
+//Update and sort container of processes
+void System::SetProcesses() {
+    for (int pid : LinuxParser::Pids()) {
+        processes_.push_back(Process(pid));
+    }
+    std::sort(processes_.begin(), processes_.end());
+}
 
 //Return a container composed of the system's processes
 vector<Process>& System::Processes() { 
-    vector<Process> processes = {};
-    for (int pid : LinuxParser::Pids()) {
-        Process process(pid);
-        processes.push_back(process);
-    }
-
-    std::sort(processes.begin(), processes.end());
-    processes_ = processes;
     return processes_;
 }
 

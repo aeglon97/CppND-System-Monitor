@@ -9,6 +9,7 @@
 
 class System {
  public:
+  System();
   Processor& Cpu();              
   std::vector<Process>& Processes();  
   float MemoryUtilization();         
@@ -17,6 +18,7 @@ class System {
   int RunningProcesses();             
   std::string Kernel();
   std::string OperatingSystem();     
+  void SetProcesses();
 
  private:
   Processor cpu_ = {};
