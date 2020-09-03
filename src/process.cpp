@@ -48,12 +48,12 @@ string Process::User() { return LinuxParser::User(pid_); }
 //Return the age of this process (in seconds)
 long int Process::UpTime() { return LinuxParser::UpTime(pid_); }
 
-//Overload the "less than" comparison operator for Process objects
+//Sort processes by descending CPU utilization
 bool Process::operator<(Process const& a) const { 
     return this->cpu_utilization_ > a.cpu_utilization_;
 }
 
-//Store /proc/[pid]/stat values in vector
+//Store /proc/[pid]/stat values in a vector
 vector<string> Process::RetrieveCpuValues() {
     string line;
     std::ifstream stream(LinuxParser::kProcProcessDirectory + to_string(pid_) + LinuxParser::kStatFilename);
@@ -61,7 +61,7 @@ vector<string> Process::RetrieveCpuValues() {
     if(stream.is_open()) {
         std::getline(stream, line);
     }
-    
+
     vector<string> cpu_values = LinuxParser::SplitLine(line);
     return cpu_values;
 }

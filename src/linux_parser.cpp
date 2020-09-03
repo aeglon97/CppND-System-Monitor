@@ -22,18 +22,18 @@ namespace fs = std::experimental::filesystem;
 
 //HELPER FUNCTIONS
 
-//Parse file for key-value pairs
-string ParseAndRetrieve (std::string path, std::string myKey) {
-  string line, key, value;
-  std::ifstream filestream(path); 
-    if (filestream.is_open()) {
-      while (std::getline(filestream, line)) {
-        std::replace(line.begin(), line.end(), ':', ' ');
-        std::istringstream linestream(line);
-        while (linestream >> key >> value) {
-          if (key == myKey) {
-            return value;
-        }
+//Parse file keys for generic values
+template<typename Type> Type ParseValueByKey(string path, string mykey) {
+  string line, key;
+  Type value;
+
+  std::ifstream filestream(path);
+  if (filestream.is_open()) {
+    while (getline(filestream, line)) {
+      std::replace(line.begin(), line.end(), ':', ' ');
+      std::istringstream linestream(line);
+      while(linestream >> key >> value) {
+        if (key == mykey) return value;
       }
     }
   }
@@ -42,6 +42,15 @@ string ParseAndRetrieve (std::string path, std::string myKey) {
 
 float KbToMb(float kb) {
   return kb / 1024;
+}
+
+//Split string by whitespace into a vector
+vector<string> LinuxParser::SplitLine(string line) {
+  std::istringstream buffer(line);
+  std::istream_iterator<string> beg(buffer), end;
+  vector<string> tokens(beg, end);
+
+  return tokens;
 }
 
 //SYSTEM
@@ -63,15 +72,6 @@ string LinuxParser::OperatingSystem() {
     }
   }
   return value;
-}
-
-//Split string by whitespace into a vector
-vector<string> LinuxParser::SplitLine(string line) {
-  std::istringstream buffer(line);
-  std::istream_iterator<string> beg(buffer), end;
-  vector<string> tokens(beg, end);
-
-  return tokens;
 }
 
 string LinuxParser::Kernel() {
@@ -96,7 +96,6 @@ vector<int> LinuxParser::Pids() {
       //Is every character of the directory name a digit?
       if (std::all_of(directory_name.begin(), directory_name.end(), isdigit)) {
         int pid = stoi(directory_name);
-        assert(pid != 0);
         pids.push_back(pid);
       }
     }
@@ -132,7 +131,7 @@ float LinuxParser::MemoryUtilization() {
 
 //Read and return the system uptime
 long LinuxParser::UpTime() { 
-  string uptime, idletime;
+  long uptime, idletime;
   string line;
   std::ifstream stream(kProcDirectory + kUptimeFilename);
   if (stream.is_open()){
@@ -140,7 +139,7 @@ long LinuxParser::UpTime() {
     std::istringstream linestream(line);
     linestream >> uptime >> idletime;
   }
-  return stol(uptime);
+  return uptime;
  }
 
 //Read and return the number of jiffies for the system
@@ -162,13 +161,17 @@ vector<string> LinuxParser::CpuUtilization() {
 
 //Read and return the total number of processes
 int LinuxParser::TotalProcesses() {
-  return std::stoi(ParseAndRetrieve(kProcDirectory + kStatFilename, "processes"));
+  int total_processes = ParseValueByKey<int>(kProcDirectory + kStatFilename, "processes");
+  return total_processes;
 }
 
 //Read and return the number of running processes
 int LinuxParser::RunningProcesses() {
-  return std::stoi(ParseAndRetrieve(kProcDirectory + kStatFilename, "procs_running"));
+  int running_processes = ParseValueByKey<int>(kProcDirectory + kStatFilename, "procs_running");
+  return running_processes;
 }
+
+//PROCESSES 
 
 //Read and return the command associated with a process
 string LinuxParser::Command(int pid) { 
@@ -183,14 +186,14 @@ string LinuxParser::Command(int pid) {
 
 //Read and return the memory used by a process
 float LinuxParser::Ram(int pid) {
-  string ram_kb = ParseAndRetrieve(kProcProcessDirectory + to_string(pid) + kStatusFilename, "VmSize");
-  float ram_mb = KbToMb(stof(ram_kb));
+  float ram_kb = ParseValueByKey<float>(kProcProcessDirectory + to_string(pid) + kStatusFilename, "VmSize");
+  float ram_mb = KbToMb(ram_kb);
   return ram_mb;
  }
 
 //Read and return the user ID associated with a process
 string LinuxParser::Uid(int pid) { 
-  const string uid = ParseAndRetrieve(kProcProcessDirectory + to_string(pid) + kStatusFilename, "Uid");
+  const string uid = ParseValueByKey<string>(kProcProcessDirectory + to_string(pid) + kStatusFilename, "Uid");
   return uid;
  }
 
