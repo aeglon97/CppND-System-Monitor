@@ -6,6 +6,9 @@
 #include <assert.h>
 #include <map>
 #include <iomanip>
+#include <experimental/filesystem>
+#include <fstream>
+#include <iostream>
 
 #include "linux_parser.h"
 
@@ -14,6 +17,8 @@ using std::string;
 using std::to_string;
 using std::vector;
 using std::map;
+
+namespace fs = std::experimental::filesystem;
 
 //HELPER FUNCTIONS
 
@@ -81,23 +86,21 @@ string LinuxParser::Kernel() {
   return kernel;
 }
 
-// BONUS: Update this to use std::filesystem
+//Store pids with std::filesystem
 vector<int> LinuxParser::Pids() {
   vector<int> pids;
-  DIR* directory = opendir(kProcDirectory.c_str());
-  struct dirent* file;
-  while ((file = readdir(directory)) != nullptr) {
-    // Is this a directory?
-    if (file->d_type == DT_DIR) {
-      // Is every character of the name a digit?
-      string filename(file->d_name);
-      if (std::all_of(filename.begin(), filename.end(), isdigit)) {
-        int pid = stoi(filename);
+  for (const auto &entry : fs::directory_iterator(kProcDirectory)) {
+    //Is this a directory?
+    if (fs::is_directory(entry)) {
+      string directory_name = fs::path(entry.path()).filename();
+      //Is every character of the directory name a digit?
+      if (std::all_of(directory_name.begin(), directory_name.end(), isdigit)) {
+        int pid = stoi(directory_name);
+        assert(pid != 0);
         pids.push_back(pid);
       }
     }
   }
-  closedir(directory);
   return pids;
 }
 

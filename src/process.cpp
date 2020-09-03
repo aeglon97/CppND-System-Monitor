@@ -62,11 +62,7 @@ vector<string> Process::RetrieveCpuValues() {
         std::getline(stream, line);
     }
     
-    //Split string into an array by whitespace
-    istringstream buffer(line);
-    istream_iterator<string> beg(buffer), end;
-
-    vector<string> cpu_values(beg, end);
+    vector<string> cpu_values = LinuxParser::SplitLine(line);
     return cpu_values;
 }
 
