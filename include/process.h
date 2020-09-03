@@ -25,7 +25,6 @@ class Process {
   //mutator
   void SetPid(int pid);
 
-  // TODO: Declare any necessary private members
  private:
   int pid_;
 

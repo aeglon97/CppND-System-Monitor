@@ -163,12 +163,18 @@ string LinuxParser::Command(int pid) {
     }
   return line;
 }
+
+//General purpose helper function
+float KbToMb(float kb) {
+  return kb / 1024;
+}
+
 //Read and return the memory used by a process
 string LinuxParser::Ram(int pid) {
   string ram_kb = ParseAndRetrieve(kProcProcessDirectory + to_string(pid) + kStatusFilename, "VmSize");
 
   //Convert to megabytes
-  float ram_mb = stof(ram_kb) / 1024;
+  float ram_mb = KbToMb(stof(ram_kb));
   std::stringstream ram_mb_stream;
 
   //Round to 2 decimal places
