@@ -33,7 +33,7 @@ string ParseAndRetrieve (std::string path, std::string myKey) {
   return value;
 }
 
-// DONE: An example of how to read data from the filesystem
+//An example of how to read data from the filesystem
 string LinuxParser::OperatingSystem() {
   string line, key, value;
   std::ifstream filestream(kOSPath); 
@@ -54,7 +54,7 @@ string LinuxParser::OperatingSystem() {
   return value;
 }
 
-// DONE: An example of how to read data from the filesystem
+//An example of how to read data from the filesystem
 string LinuxParser::Kernel() {
   string os, version, kernel;
   string line;
@@ -126,20 +126,19 @@ long LinuxParser::UpTime() {
   return stol(uptime);
  }
 
-// TODO: Read and return the number of jiffies for the system
+//Read and return the number of jiffies for the system
 long LinuxParser::Jiffies() { return 0; }
 
-// TODO: Read and return the number of active jiffies for a PID
-// REMOVE: [[maybe_unused]] once you define the function
+//Read and return the number of active jiffies for a PID
 long LinuxParser::ActiveJiffies(int pid[[maybe_unused]]) { return 0; }
 
-// TODO: Read and return the number of active jiffies for the system
+//Read and return the number of active jiffies for the system
 long LinuxParser::ActiveJiffies() { return 0; }
 
-// TODO: Read and return the number of idle jiffies for the system
+//Read and return the number of idle jiffies for the system
 long LinuxParser::IdleJiffies() { return 0 ; }
 
-// TODO: Read and return CPU utilization
+//Read and return CPU utilization
 vector<string> LinuxParser::CpuUtilization() { 
   return {}; 
 }
@@ -168,11 +167,11 @@ string LinuxParser::Command(int pid) {
 string LinuxParser::Ram(int pid) {
   string ram_kb = ParseAndRetrieve(kProcProcessDirectory + to_string(pid) + kStatusFilename, "VmSize");
 
-  //convert to megabytes
+  //Convert to megabytes
   float ram_mb = stof(ram_kb) / 1024;
   std::stringstream ram_mb_stream;
 
-  //round to 2 decimal places
+  //Round to 2 decimal places
   ram_mb_stream << std::fixed << std::setprecision(2) << ram_mb;
   return ram_mb_stream.str();
  }
