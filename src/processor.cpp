@@ -62,9 +62,9 @@ float CalculateUtilization(map<string, int> prev_map, map<string, int> map) {
     float total = idle + nonidle;
 
     //Change in active time / change in total time
-    float activetime = prevnonidle - nonidle;
-    float const idletime = prevtotal - total;
-    float const totaltime = activetime + idletime;
+    float delta_active_time = prevnonidle - nonidle;
+    float const delta_idle_time = prevtotal - total;
+    float const delta_total_time = delta_active_time + delta_idle_time;
 
-    return activetime / totaltime;
+    return delta_active_time / delta_total_time;
 }
