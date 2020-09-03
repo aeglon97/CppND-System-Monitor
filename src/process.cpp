@@ -33,7 +33,7 @@ float Process::CpuUtilization() {
     float seconds = LinuxParser::UpTime()  - (starttime_ / Hertz);
 
     //Calculate CPU Utilization
-    return 100 * ((total_time / Hertz) / seconds);
+    return (total_time / Hertz) / seconds;
  }
 
 // TODO: Return the command that generated this process
@@ -50,9 +50,11 @@ long int Process::UpTime() { return LinuxParser::UpTime(pid_); }
 
 // TODO: Overload the "less than" comparison operator for Process objects
 // REMOVE: [[maybe_unused]] once you define the function
-bool Process::operator<(Process const& a[[maybe_unused]]) const { return true; }
+bool Process::operator<(Process const& a[[maybe_unused]]) const { 
+    return true; 
+}
 
-//Store /proc/[pid]/stat values in array
+//Store /proc/[pid]/stat values in vector
 vector<string> Process::RetrieveCpuValues() {
     string line;
     std::ifstream stream(LinuxParser::kProcProcessDirectory + to_string(pid_) + LinuxParser::kStatFilename);
