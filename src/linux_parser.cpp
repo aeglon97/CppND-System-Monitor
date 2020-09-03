@@ -22,7 +22,7 @@ namespace fs = std::experimental::filesystem;
 //HELPER FUNCTIONS
 
 //Parse file keys for generic values
-template<typename Type> Type ParseValueByKey(string path, string mykey) {
+template<typename Type> Type ParseValueByKey(const string path, const string mykey) {
   string line, key;
   Type value;
 
@@ -44,7 +44,7 @@ float KbToMb(float kb) {
 }
 
 //Split string by whitespace into a vector
-vector<string> LinuxParser::SplitLine(string line) {
+vector<string> LinuxParser::SplitLine(const string line) {
   std::istringstream buffer(line);
   std::istream_iterator<string> beg(buffer), end;
   vector<string> tokens(beg, end);
@@ -173,7 +173,7 @@ int LinuxParser::RunningProcesses() {
 //PROCESSES 
 
 //Read and return the command associated with a process
-string LinuxParser::Command(int pid) { 
+string LinuxParser::Command(const int pid) { 
   string line;
   std::ifstream filestream(kProcProcessDirectory + to_string(pid) + kCmdlineFilename); 
   if (filestream.is_open()) {
@@ -184,20 +184,20 @@ string LinuxParser::Command(int pid) {
 }
 
 //Read and return the memory used by a process
-float LinuxParser::Ram(int pid) {
+float LinuxParser::Ram(const int pid) {
   float ram_kb = ParseValueByKey<float>(kProcProcessDirectory + to_string(pid) + kStatusFilename, "VmSize");
   float ram_mb = KbToMb(ram_kb);
   return ram_mb;
  }
 
 //Read and return the user ID associated with a process
-string LinuxParser::Uid(int pid) { 
+string LinuxParser::Uid(const int pid) { 
   const string uid = ParseValueByKey<string>(kProcProcessDirectory + to_string(pid) + kStatusFilename, "Uid");
   return uid;
  }
 
 //Read and return the user associated with a process
-string LinuxParser::User(int pid) {
+string LinuxParser::User(const int pid) {
   string line, username, x, uid;
   const string myuid = Uid(pid);
   std::ifstream stream(kPasswordPath);
@@ -215,7 +215,7 @@ string LinuxParser::User(int pid) {
 }
 
 //Read and return the uptime of a process
-long int LinuxParser::UpTime(int pid) {
+long int LinuxParser::UpTime(const int pid) {
   long unsigned int uptime;
 
   string line;

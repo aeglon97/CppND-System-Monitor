@@ -9,7 +9,7 @@ using std::setprecision;
 
 // INPUT: Long int measuring seconds
 // OUTPUT: HH:MM:SS
-string Format::ElapsedTime(long seconds) { 
+string Format::ElapsedTime(const long seconds) { 
     int hours_elapsed, minutes_elapsed, seconds_elapsed;
     hours_elapsed = seconds / 3600;
     minutes_elapsed = (seconds % 3600) / 60;
@@ -21,7 +21,7 @@ string Format::ElapsedTime(long seconds) {
 }
 
 //Round to 2 decimal places
-string Format::RoundedFloat(float num) {
+string Format::RoundedFloat(const float num) {
     stringstream stream;
     stream << fixed << setprecision(2) << num;
     return stream.str();

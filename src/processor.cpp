@@ -11,7 +11,7 @@ using namespace std;
 
 //Function definitions
 map<string, int> MapProcInfo();
-float CalculateUtilization(map<string, int> prev_map, map<string, int> map);
+float CalculateUtilization(const map<string, int> prev_map, const map<string, int> map);
 
 //Return the aggregate CPU utilization
 float Processor::Utilization() { 
