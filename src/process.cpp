@@ -52,32 +52,19 @@ long int Process::UpTime() { return LinuxParser::UpTime(pid_); }
 // REMOVE: [[maybe_unused]] once you define the function
 bool Process::operator<(Process const& a[[maybe_unused]]) const { return true; }
 
-//1. Store /proc/[pid]/stat values in array
+//Store /proc/[pid]/stat values in array
 vector<string> Process::RetrieveCpuValues() {
-    long uptime;
     string line;
     std::ifstream stream(LinuxParser::kProcProcessDirectory + to_string(pid_) + LinuxParser::kStatFilename);
 
     if(stream.is_open()) {
-        assert(stream);
         std::getline(stream, line);
-        // assert(!line.empty());
-        // std::ifstream in(line);
-        
-        // while ( getline( in, value, ' ')) {
-        //     assert(!value.empty());
-        //     cpu_values.push_back(value);
-        //     assert(!cpu_values.empty());
-        // }
     }
-
-    assert(!line.empty());
     //Split string into an array by whitespace
     istringstream buffer(line);
     istream_iterator<string> beg(buffer), end;
 
     vector<string> cpu_values(beg, end);
-    assert(!cpu_values.empty());
     return cpu_values;
 }
 

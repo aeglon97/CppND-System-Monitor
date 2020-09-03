@@ -204,8 +204,8 @@ string LinuxParser::User(int pid) {
 }
 
 //Read and return the uptime of a process
-long LinuxParser::UpTime(int pid) {
-  long uptime;
+long int LinuxParser::UpTime(int pid) {
+  long int uptime;
   int index = 0;
 
   string line;
@@ -213,16 +213,21 @@ long LinuxParser::UpTime(int pid) {
   
   if(stream.is_open()) {
     std::getline(stream, line);
-    string token;
-    while(std::getline(stream, token, ' ')) {
-      index++;
-      if (index == 22) {
-        uptime = stol(token);
-        break;
-      }
-    }
+    // string token;
+    // while(std::getline(stream, token, ' ')) {
+    //   index++;
+    //   if (index == 22) {
+    //     uptime = stol(token);
+    //     break;
+    //   }
+    // }
   }
 
-  uptime /= sysconf(_SC_CLK_TCK);
-  return 0;
+  std::istringstream buffer(line);
+  std::istream_iterator<string> beg(buffer), end;
+  vector<string> proc_stat_values(beg, end);
+
+  uptime = stol(proc_stat_values[21]) / sysconf(_SC_CLK_TCK);
+  // uptime /= sysconf(_SC_CLK_TCK);
+  return uptime;
 }
