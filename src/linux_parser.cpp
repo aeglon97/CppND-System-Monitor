@@ -15,7 +15,9 @@ using std::to_string;
 using std::vector;
 using std::map;
 
-//Helper function to parse file for key-value pairs
+//HELPER FUNCTIONS
+
+//Parse file for key-value pairs
 string ParseAndRetrieve (std::string path, std::string myKey) {
   string line, key, value;
   std::ifstream filestream(path); 
@@ -33,7 +35,11 @@ string ParseAndRetrieve (std::string path, std::string myKey) {
   return value;
 }
 
-//An example of how to read data from the filesystem
+float KbToMb(float kb) {
+  return kb / 1024;
+}
+
+//SYSTEM
 string LinuxParser::OperatingSystem() {
   string line, key, value;
   std::ifstream filestream(kOSPath); 
@@ -54,7 +60,6 @@ string LinuxParser::OperatingSystem() {
   return value;
 }
 
-//An example of how to read data from the filesystem
 string LinuxParser::Kernel() {
   string os, version, kernel;
   string line;
@@ -164,22 +169,11 @@ string LinuxParser::Command(int pid) {
   return line;
 }
 
-//General purpose helper function
-float KbToMb(float kb) {
-  return kb / 1024;
-}
-
 //Read and return the memory used by a process
-string LinuxParser::Ram(int pid) {
+float LinuxParser::Ram(int pid) {
   string ram_kb = ParseAndRetrieve(kProcProcessDirectory + to_string(pid) + kStatusFilename, "VmSize");
-
-  //Convert to megabytes
   float ram_mb = KbToMb(stof(ram_kb));
-  std::stringstream ram_mb_stream;
-
-  //Round to 2 decimal places
-  ram_mb_stream << std::fixed << std::setprecision(2) << ram_mb;
-  return ram_mb_stream.str();
+  return ram_mb;
  }
 
 //Read and return the user ID associated with a process
@@ -209,7 +203,6 @@ string LinuxParser::User(int pid) {
 //Read and return the uptime of a process
 long int LinuxParser::UpTime(int pid) {
   long unsigned int uptime;
-  int index = 0;
 
   string line;
   std::ifstream stream(kProcProcessDirectory + to_string(pid) + kStatFilename);

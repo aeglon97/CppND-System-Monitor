@@ -3,8 +3,11 @@
 
 #include <string>
 
+using namespace std;
+
 namespace Format {
-std::string ElapsedTime(long times);
+    string ElapsedTime(long times);
+    string RoundedFloat(float num);
 };
 
 #endif

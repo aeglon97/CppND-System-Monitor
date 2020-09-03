@@ -1,5 +1,5 @@
 #include <string>
-
+#include <iomanip>
 #include "format.h"
 
 using namespace std;
@@ -16,4 +16,11 @@ string Format::ElapsedTime(long seconds) {
     char buffer[100];
     hours_elapsed = sprintf(buffer, "%d:%d:%d", hours_elapsed, minutes_elapsed, seconds_elapsed);
     return buffer;
+}
+
+//Round to 2 decimal places
+string Format::RoundedFloat(float num) {
+    std::stringstream stream;
+    stream << std::fixed << std::setprecision(2) << num;
+    return stream.str();
 }
