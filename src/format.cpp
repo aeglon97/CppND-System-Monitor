@@ -10,13 +10,12 @@ using std::setprecision;
 // INPUT: Long int measuring seconds
 // OUTPUT: HH:MM:SS
 string Format::ElapsedTime(const long seconds) { 
-    int hours_elapsed, minutes_elapsed, seconds_elapsed;
-    hours_elapsed = seconds / 3600;
-    minutes_elapsed = (seconds % 3600) / 60;
-    seconds_elapsed = seconds % 60;
+    int hoursElapsed = seconds / 3600;
+    int minutesElapsed = (seconds % 3600) / 60;
+    int secondsElapsed = seconds % 60;
 
     char buffer[100];
-    hours_elapsed = sprintf(buffer, "%d:%d:%d", hours_elapsed, minutes_elapsed, seconds_elapsed);
+    hoursElapsed = sprintf(buffer, "%d:%d:%d", hoursElapsed, minutesElapsed, secondsElapsed);
     return buffer;
 }
 

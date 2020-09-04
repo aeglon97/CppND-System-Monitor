@@ -12,29 +12,29 @@ It contains relevant attributes as shown below
 class Process {
  public:
   Process(const int pid);
-  int Pid();                               // TODO: See src/process.cpp
-  std::string User();                      // TODO: See src/process.cpp
-  std::string Command();                   // TODO: See src/process.cpp
-  float CpuUtilization();                  // TODO: See src/process.cpp
-  float Ram();                       // TODO: See src/process.cpp
-  long int UpTime();                       // TODO: See src/process.cpp
-  bool operator<(Process const& a) const;  // TODO: See src/process.cpp
-  vector<string> RetrieveCpuValues();
-  void SetCpuValues();
+  int Pid();
+  std::string User();
+  std::string Command();
+  float CpuUtilization();
+  float Ram();
+  long int UpTime();
+  bool operator<(Process const& a) const; 
+  vector<string> CpuValues();
 
-  //mutator
+  //mutators
   void SetPid(int pid);
+  void SetCpuValues();
 
  private:
   int pid_;
 
   //CPU utilization calculation
-  float utime_;
-  float stime_;
-  float cutime_;
-  float cstime_;
-  float starttime_;
-  float cpu_utilization_;
+  float uTime_;
+  float sTime_;
+  float cuTime_;
+  float csTime_;
+  float startTime_;
+  float cpuUtilization_;
 };
 
 #endif

@@ -22,7 +22,7 @@ namespace fs = std::experimental::filesystem;
 //HELPER FUNCTIONS
 
 //Parse file keys for generic values
-template<typename Type> Type ParseValueByKey(const string path, const string mykey) {
+template<typename Type> Type ParseValueByKey(const string path, const string myKey) {
   string line, key;
   Type value;
 
@@ -30,9 +30,9 @@ template<typename Type> Type ParseValueByKey(const string path, const string myk
   if (stream.is_open()) {
     while (getline(stream, line)) {
       std::replace(line.begin(), line.end(), ':', ' ');
-      std::istringstream linestream(line);
-      while(linestream >> key >> value) {
-        if (key == mykey) {
+      std::istringstream lineStream(line);
+      while(lineStream >> key >> value) {
+        if (key == myKey) {
           stream.close();
           return value;
         }
@@ -64,8 +64,8 @@ string LinuxParser::OperatingSystem() {
         std::replace(line.begin(), line.end(), ' ', '_');
         std::replace(line.begin(), line.end(), '=', ' ');
         std::replace(line.begin(), line.end(), '"', ' ');
-        std::istringstream linestream(line);
-        while (linestream >> key >> value) {
+        std::istringstream lineStream(line);
+        while (lineStream >> key >> value) {
           if (key == "PRETTY_NAME") {
             std::replace(value.begin(), value.end(), '_', ' ');
             stream.close();
@@ -84,8 +84,8 @@ string LinuxParser::Kernel() {
   std::ifstream stream(kProcDirectory + kVersionFilename);
   if (stream.is_open()) {
     std::getline(stream, line);
-    std::istringstream linestream(line);
-    linestream >> os >> version >> kernel;
+    std::istringstream lineStream(line);
+    lineStream >> os >> version >> kernel;
   }
   stream.close();
   return kernel;
@@ -97,10 +97,10 @@ vector<int> LinuxParser::Pids() {
   for (const auto &entry : fs::directory_iterator(kProcDirectory)) {
     //Is this a directory?
     if (fs::is_directory(entry)) {
-      string directory_name = fs::path(entry.path()).filename();
+      string directoryName = fs::path(entry.path()).filename();
       //Is every character of the directory name a digit?
-      if (std::all_of(directory_name.begin(), directory_name.end(), isdigit)) {
-        int pid = stoi(directory_name);
+      if (std::all_of(directoryName.begin(), directoryName.end(), isdigit)) {
+        int pid = stoi(directoryName);
         pids.push_back(pid);
       }
     }
@@ -110,42 +110,42 @@ vector<int> LinuxParser::Pids() {
 
 float LinuxParser::MemoryUtilization() { 
   string line, key, value, kb;
-  float memtotal, memfree, memutil;
+  float memTotal, memFree, memUtil;
   std::ifstream stream(kProcDirectory + kMeminfoFilename);
   if (stream.is_open()) {
     while(std::getline(stream, line)) {
       std::replace(line.begin(), line.end(), ':', ' ');
-      std::istringstream linestream(line);
-      while (linestream >> key >> value) {
-        if (memtotal && memfree) {
-          memutil = (memtotal - memfree) / memtotal;
+      std::istringstream lineStream(line);
+      while (lineStream >> key >> value) {
+        if (memTotal && memFree) {
+          memUtil = (memTotal - memFree) / memTotal;
           stream.close();
-          return memutil;
+          return memUtil;
         }
         if(key == "MemTotal") {
-          memtotal = stof(value);
+          memTotal = stof(value);
         }
         if(key == "MemFree") {
-          memfree = stof(value);
+          memFree = stof(value);
         }
       }
     }
   }
   stream.close();
-  return memutil; 
+  return memUtil; 
 }
 
 long LinuxParser::UpTime() { 
-  long uptime, idletime;
+  long upTime, idleTime;
   string line;
   std::ifstream stream(kProcDirectory + kUptimeFilename);
   if (stream.is_open()){
     std::getline(stream, line);
-    std::istringstream linestream(line);
-    linestream >> uptime >> idletime;
+    std::istringstream lineStream(line);
+    lineStream >> upTime >> idleTime;
     stream.close();
   }
-  return uptime;
+  return upTime;
  }
 
 //Read and return the number of jiffies for the system
@@ -166,13 +166,13 @@ vector<string> LinuxParser::CpuUtilization() {
 }
 
 int LinuxParser::TotalProcesses() {
-  int total_processes = ParseValueByKey<int>(kProcDirectory + kStatFilename, "processes");
-  return total_processes;
+  int totalProcesses = ParseValueByKey<int>(kProcDirectory + kStatFilename, "processes");
+  return totalProcesses;
 }
 
 int LinuxParser::RunningProcesses() {
-  int running_processes = ParseValueByKey<int>(kProcDirectory + kStatFilename, "procs_running");
-  return running_processes;
+  int runningProcesses = ParseValueByKey<int>(kProcDirectory + kStatFilename, "procs_running");
+  return runningProcesses;
 }
 
 //PROCESSES 
@@ -188,9 +188,9 @@ string LinuxParser::Command(const int pid) {
 }
 
 float LinuxParser::Ram(const int pid) {
-  float ram_kb = ParseValueByKey<float>(kProcProcessDirectory + to_string(pid) + kStatusFilename, "VmSize");
-  float ram_mb = KbToMb(ram_kb);
-  return ram_mb;
+  float ramKb = ParseValueByKey<float>(kProcProcessDirectory + to_string(pid) + kStatusFilename, "VmSize");
+  float ramMb = KbToMb(ramKb);
+  return ramMb;
  }
 
 string LinuxParser::Uid(const int pid) { 
@@ -206,8 +206,8 @@ string LinuxParser::User(const int pid) {
   if (stream.is_open()) {
     while(std::getline(stream, line)) {
       std::replace(line.begin(), line.end(), ':', ' ');
-      std::istringstream linestream(line);
-      while (linestream >> username >> x >> uid) {
+      std::istringstream lineStream(line);
+      while (lineStream >> username >> x >> uid) {
         if (myuid == uid) { 
           stream.close();
           return username; 
@@ -228,11 +228,11 @@ long int LinuxParser::UpTime(const int pid) {
     stream.close();
   }
 
-  vector<string> proc_stat_values = SplitLine(line);
+  vector<string> procInfo = SplitLine(line);
 
-  long unsigned int start_time = stol(proc_stat_values[21]);
+  long unsigned int startTime = stol(procInfo[21]);
 
   //Convert from clock ticks to seconds
-  long unsigned int uptime = LinuxParser::UpTime() - (start_time / sysconf(_SC_CLK_TCK));
-  return uptime;
+  long unsigned int upTime = LinuxParser::UpTime() - (startTime / sysconf(_SC_CLK_TCK));
+  return upTime;
 }

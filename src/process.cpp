@@ -16,23 +16,23 @@ using std::vector;
 
 Process::Process(const int pid) : pid_(pid) {
     SetCpuValues();
-    cpu_utilization_ = CpuUtilization();
+    cpuUtilization_ = CpuUtilization();
 }
 
 int Process::Pid() { return pid_; }
 
 float Process::CpuUtilization() {
-    float Hertz = sysconf(_SC_CLK_TCK);
-    float total_time = utime_ + stime_;
+    float hertz = sysconf(_SC_CLK_TCK);
+    float totalTime = uTime_ + sTime_;
 
     //Include children process time
-    total_time = total_time + cutime_ + cstime_;
+    totalTime = totalTime + cuTime_ + csTime_;
 
     //Get total elapsed time in seconds
-    float seconds = LinuxParser::UpTime()  - (starttime_ / Hertz);
+    float seconds = LinuxParser::UpTime()  - (startTime_ / hertz);
 
     //Calculate CPU Utilization
-    return (total_time / Hertz) / seconds;
+    return (totalTime / hertz) / seconds;
  }
 
 string Process::Command() { return LinuxParser::Command(pid_); }
@@ -45,11 +45,11 @@ long int Process::UpTime() { return LinuxParser::UpTime(pid_); }
 
 //Sort processes by descending CPU utilization
 bool Process::operator<(Process const& a) const { 
-    return this->cpu_utilization_ > a.cpu_utilization_;
+    return this->cpuUtilization_ > a.cpuUtilization_;
 }
 
 //Store /proc/[pid]/stat values in a vector
-vector<string> Process::RetrieveCpuValues() {
+vector<string> Process::CpuValues() {
     string line;
     std::ifstream stream(LinuxParser::kProcProcessDirectory + to_string(pid_) + LinuxParser::kStatFilename);
 
@@ -58,16 +58,16 @@ vector<string> Process::RetrieveCpuValues() {
         stream.close();
     }
 
-    vector<string> cpu_values = LinuxParser::SplitLine(line);
-    return cpu_values;
+    vector<string> cpuValues = LinuxParser::SplitLine(line);
+    return cpuValues;
 }
 
 //Set this process's CPU values upon initialization
 void Process::SetCpuValues() {
-    vector<string> cpu_values = RetrieveCpuValues();
-    utime_ = stof(cpu_values[13]);
-    stime_ = stof(cpu_values[14]);
-    cutime_ = stof(cpu_values[15]);
-    cstime_ = stof(cpu_values[16]);
-    starttime_ = stof(cpu_values[21]);
+    vector<string> cpuValues = Process::CpuValues();
+    uTime_ = stof(cpuValues[13]);
+    sTime_ = stof(cpuValues[14]);
+    cuTime_ = stof(cpuValues[15]);
+    csTime_ = stof(cpuValues[16]);
+    startTime_ = stof(cpuValues[21]);
 }
