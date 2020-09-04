@@ -87,8 +87,8 @@ string LinuxParser::Kernel() {
     std::getline(stream, line);
     std::istringstream lineStream(line);
     lineStream >> os >> version >> kernel;
+    stream.close();
   }
-  stream.close();
   return kernel;
 }
 
@@ -123,7 +123,7 @@ float LinuxParser::MemoryUtilization() {
       std::istringstream lineStream(line);
       while (lineStream >> key >> value) {
 
-        //calculate memory utilization
+        //Calculate memory utilization
         if (memTotal && memFree) {
           memUtil = (memTotal - memFree) / memTotal;
           stream.close();
@@ -168,7 +168,6 @@ int LinuxParser::RunningProcesses() {
 }
 
 //PROCESSES 
-
 string LinuxParser::Command(const int pid) { 
   string line;
   std::ifstream stream(kProcProcessDirectory + to_string(pid) + kCmdlineFilename); 
@@ -179,8 +178,9 @@ string LinuxParser::Command(const int pid) {
   return line;
 }
 
+//Used VmData instead of VmSize to account for physical RAM (instead of virtual RAM)
 float LinuxParser::Ram(const int pid) {
-  float ramKb = ParseValueByKey<float>(kProcProcessDirectory + to_string(pid) + kStatusFilename, "VmSize");
+  float ramKb = ParseValueByKey<float>(kProcProcessDirectory + to_string(pid) + kStatusFilename, "VmData");
   float ramMb = KbToMb(ramKb);
   return ramMb;
  }
@@ -193,8 +193,8 @@ string LinuxParser::Uid(const int pid) {
 string LinuxParser::User(const int pid) {
   string line, username, x, uid;
   const string myuid = Uid(pid);
-  std::ifstream stream(kPasswordPath);
 
+  std::ifstream stream(kPasswordPath);
   if (stream.is_open()) {
     while(std::getline(stream, line)) {
       std::replace(line.begin(), line.end(), ':', ' ');
@@ -213,8 +213,8 @@ string LinuxParser::User(const int pid) {
 
 long int LinuxParser::UpTime(const int pid) {
   string line;
+
   std::ifstream stream(kProcProcessDirectory + to_string(pid) + kStatFilename);
-  
   if(stream.is_open()) {
     std::getline(stream, line);
     stream.close();
