@@ -55,6 +55,7 @@ vector<string> Process::RetrieveCpuValues() {
 
     if(stream.is_open()) {
         std::getline(stream, line);
+        stream.close();
     }
 
     vector<string> cpu_values = LinuxParser::SplitLine(line);

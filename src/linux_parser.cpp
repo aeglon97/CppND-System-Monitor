@@ -26,13 +26,16 @@ template<typename Type> Type ParseValueByKey(const string path, const string myk
   string line, key;
   Type value;
 
-  std::ifstream filestream(path);
-  if (filestream.is_open()) {
-    while (getline(filestream, line)) {
+  std::ifstream stream(path);
+  if (stream.is_open()) {
+    while (getline(stream, line)) {
       std::replace(line.begin(), line.end(), ':', ' ');
       std::istringstream linestream(line);
       while(linestream >> key >> value) {
-        if (key == mykey) return value;
+        if (key == mykey) {
+          stream.close();
+          return value;
+        }
       }
     }
   }
@@ -55,9 +58,9 @@ vector<string> LinuxParser::SplitLine(const string line) {
 //SYSTEM
 string LinuxParser::OperatingSystem() {
   string line, key, value;
-  std::ifstream filestream(kOSPath); 
-    if (filestream.is_open()) {
-      while (std::getline(filestream, line)) {
+  std::ifstream stream(kOSPath); 
+    if (stream.is_open()) {
+      while (std::getline(stream, line)) {
         std::replace(line.begin(), line.end(), ' ', '_');
         std::replace(line.begin(), line.end(), '=', ' ');
         std::replace(line.begin(), line.end(), '"', ' ');
@@ -65,11 +68,13 @@ string LinuxParser::OperatingSystem() {
         while (linestream >> key >> value) {
           if (key == "PRETTY_NAME") {
             std::replace(value.begin(), value.end(), '_', ' ');
+            stream.close();
             return value;
         }
       }
     }
   }
+  stream.close();
   return value;
 }
 
@@ -82,6 +87,7 @@ string LinuxParser::Kernel() {
     std::istringstream linestream(line);
     linestream >> os >> version >> kernel;
   }
+  stream.close();
   return kernel;
 }
 
@@ -113,6 +119,7 @@ float LinuxParser::MemoryUtilization() {
       while (linestream >> key >> value) {
         if (memtotal && memfree) {
           memutil = (memtotal - memfree) / memtotal;
+          stream.close();
           return memutil;
         }
         if(key == "MemTotal") {
@@ -124,6 +131,7 @@ float LinuxParser::MemoryUtilization() {
       }
     }
   }
+  stream.close();
   return memutil; 
 }
 
@@ -135,6 +143,7 @@ long LinuxParser::UpTime() {
     std::getline(stream, line);
     std::istringstream linestream(line);
     linestream >> uptime >> idletime;
+    stream.close();
   }
   return uptime;
  }
@@ -170,11 +179,11 @@ int LinuxParser::RunningProcesses() {
 
 string LinuxParser::Command(const int pid) { 
   string line;
-  std::ifstream filestream(kProcProcessDirectory + to_string(pid) + kCmdlineFilename); 
-  if (filestream.is_open()) {
-    std::getline(filestream, line);
-    return line;
-    }
+  std::ifstream stream(kProcProcessDirectory + to_string(pid) + kCmdlineFilename); 
+  if (stream.is_open()) {
+    std::getline(stream, line);
+    stream.close();
+  }
   return line;
 }
 
@@ -199,10 +208,14 @@ string LinuxParser::User(const int pid) {
       std::replace(line.begin(), line.end(), ':', ' ');
       std::istringstream linestream(line);
       while (linestream >> username >> x >> uid) {
-        if (myuid == uid) { return username; }
+        if (myuid == uid) { 
+          stream.close();
+          return username; 
+        }
       }
     }
   }
+  stream.close();
   return username;
 }
 
@@ -212,6 +225,7 @@ long int LinuxParser::UpTime(const int pid) {
   
   if(stream.is_open()) {
     std::getline(stream, line);
+    stream.close();
   }
 
   vector<string> proc_stat_values = SplitLine(line);

@@ -34,6 +34,7 @@ map<string, int> MapProcInfo() {
         getline(stream, line);
         std::istringstream linestream(line);
         linestream >> cpu >> user >> nice >> system >> idle >> iowait >> irq >> softirq >> steal >> guest >> guest_nice;
+        stream.close();
     }
     
     result["user"] = user;
