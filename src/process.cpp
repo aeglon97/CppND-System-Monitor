@@ -61,7 +61,7 @@ vector<string> Process::CpuValues() {
         stream.close();
     }
 
-    vector<string> cpuValues = LinuxParser::SplitLine(line);
+    vector<string> cpuValues = LinuxParser::ParsedTokens(line);
     return cpuValues;
 }
 

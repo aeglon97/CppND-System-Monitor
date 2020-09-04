@@ -48,7 +48,7 @@ float KbToMb(float kb) {
 }
 
 //Split string by whitespace into a vector
-vector<string> LinuxParser::SplitLine(const string line) {
+vector<string> LinuxParser::ParsedTokens(const string line) {
   std::istringstream buffer(line);
   std::istream_iterator<string> beg(buffer), end;
   vector<string> tokens(beg, end);
@@ -157,23 +157,6 @@ long LinuxParser::UpTime() {
   return upTime;
  }
 
-//Read and return the number of jiffies for the system
-long LinuxParser::Jiffies() { return 0; }
-
-//Read and return the number of active jiffies for a PID
-long LinuxParser::ActiveJiffies(int pid[[maybe_unused]]) { return 0; }
-
-//Read and return the number of active jiffies for the system
-long LinuxParser::ActiveJiffies() { return 0; }
-
-//Read and return the number of idle jiffies for the system
-long LinuxParser::IdleJiffies() { return 0 ; }
-
-//Read and return CPU utilization
-vector<string> LinuxParser::CpuUtilization() { 
-  return {}; 
-}
-
 int LinuxParser::TotalProcesses() {
   int totalProcesses = ParseValueByKey<int>(kProcDirectory + kStatFilename, "processes");
   return totalProcesses;
@@ -237,7 +220,7 @@ long int LinuxParser::UpTime(const int pid) {
     stream.close();
   }
 
-  vector<string> procInfo = SplitLine(line);
+  vector<string> procInfo = ParsedTokens(line);
   long unsigned int startTime;
   try {
     startTime = stol(procInfo[21]);
