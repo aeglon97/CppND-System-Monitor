@@ -1,4 +1,5 @@
 #include <experimental/filesystem>
+#include <exception>
 #include <iostream>
 #include <iomanip>
 #include <fstream>
@@ -100,8 +101,12 @@ vector<int> LinuxParser::Pids() {
       string directoryName = fs::path(entry.path()).filename();
       //Is every character of the directory name a digit?
       if (std::all_of(directoryName.begin(), directoryName.end(), isdigit)) {
-        int pid = stoi(directoryName);
-        pids.push_back(pid);
+        try {
+          int pid = stoi(directoryName);
+          pids.push_back(pid);
+        } catch (std::exception& e) {
+          std::cerr << e.what() << std::endl;
+        }
       }
     }
   }
@@ -117,14 +122,18 @@ float LinuxParser::MemoryUtilization() {
       std::replace(line.begin(), line.end(), ':', ' ');
       std::istringstream lineStream(line);
       while (lineStream >> key >> value) {
+
+        //calculate memory utilization
         if (memTotal && memFree) {
           memUtil = (memTotal - memFree) / memTotal;
           stream.close();
           return memUtil;
         }
+
         if(key == "MemTotal") {
           memTotal = stof(value);
         }
+
         if(key == "MemFree") {
           memFree = stof(value);
         }
@@ -229,8 +238,12 @@ long int LinuxParser::UpTime(const int pid) {
   }
 
   vector<string> procInfo = SplitLine(line);
-
-  long unsigned int startTime = stol(procInfo[21]);
+  long unsigned int startTime;
+  try {
+    startTime = stol(procInfo[21]);
+  } catch (std::exception& e) {
+    std::cerr << e.what() << std::endl;
+  }
 
   //Convert from clock ticks to seconds
   long unsigned int upTime = LinuxParser::UpTime() - (startTime / sysconf(_SC_CLK_TCK));

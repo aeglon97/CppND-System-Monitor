@@ -1,14 +1,17 @@
+#include <exception>
+#include <iostream>
 #include <iterator>
 #include <sstream>
 #include <cctype>
 #include <string>
 #include <vector>
 
+
+
 #include <unistd.h>
 
 #include "linux_parser.h"
 #include "process.h"
-
 
 using std::string;
 using std::to_string;
@@ -65,9 +68,13 @@ vector<string> Process::CpuValues() {
 //Set this process's CPU values upon initialization
 void Process::SetCpuValues() {
     vector<string> cpuValues = Process::CpuValues();
-    uTime_ = stof(cpuValues[13]);
-    sTime_ = stof(cpuValues[14]);
-    cuTime_ = stof(cpuValues[15]);
-    csTime_ = stof(cpuValues[16]);
-    startTime_ = stof(cpuValues[21]);
+    try {
+        uTime_ = stof(cpuValues[13]);
+        sTime_ = stof(cpuValues[14]);
+        cuTime_ = stof(cpuValues[15]);
+        csTime_ = stof(cpuValues[16]);
+        startTime_ = stof(cpuValues[21]);
+    } catch (std::exception& e) {
+        std::cerr << e.what() << std::endl;
+    }
 }
