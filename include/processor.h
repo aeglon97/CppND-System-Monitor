@@ -10,6 +10,7 @@ class Processor {
  public:
   float Utilization();
   float CpuUtilization(const map<string, int> prevMap, const map<string, int> map);
+  map<string, int> CpuStates();
 
  private:
 };
