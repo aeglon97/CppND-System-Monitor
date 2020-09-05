@@ -74,5 +74,5 @@ float Processor::CpuUtilization(map<string, int> prevMap, map<string, int> map) 
     float const deltaIdleTime = prevTotal - total;
     float const deltaTotalTime = deltaActiveTime + deltaIdleTime;
 
-    return deltaActiveTime / deltaTotalTime;
+    return abs(deltaActiveTime / deltaTotalTime);
 }
