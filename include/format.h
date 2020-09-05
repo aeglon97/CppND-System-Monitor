@@ -6,6 +6,7 @@
 using namespace std;
 
 namespace Format {
+    string Pad(string time);
     string ElapsedTime(long times);
     string RoundedFloat(float num);
 };
