@@ -197,6 +197,9 @@ string LinuxParser::Command(const int pid) {
     std::getline(stream, line);
     stream.close();
   }
+
+  //Limit to 40 characters
+  line = line.substr(0, 39) += "...";
   return line;
 }
 
