@@ -260,7 +260,6 @@ long int LinuxParser::UpTime(const int pid) {
 
   //Convert from clock ticks to seconds
   startTime /= sysconf(_SC_CLK_TCK);
-
   long int upTime = LinuxParser::UpTime() - startTime;
   return upTime;
 }
