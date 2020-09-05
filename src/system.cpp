@@ -10,10 +10,7 @@
 #include "process.h"
 #include "system.h"
 
-using std::set;
-using std::size_t;
-using std::string;
-using std::vector;
+using namespace std;
 
 //Set system processes upon initialization
 System::System() {
@@ -24,10 +21,10 @@ Processor& System::Cpu() { return cpu_; }
 
 //Update and sort container of system's processes
 void System::SetProcesses() {
-    for (int pid : LinuxParser::Pids()) {
-        processes_.push_back(Process(pid));
+    for (const int &pid : LinuxParser::Pids()) {
+        processes_.emplace_back(pid);
     }
-    std::sort(processes_.begin(), processes_.end());
+    sort(processes_.begin(), processes_.end());
 }
 
 //Return a container composed of the system's processes
@@ -35,11 +32,11 @@ vector<Process>& System::Processes() {
     return processes_;
 }
 
-std::string System::Kernel() { return LinuxParser::Kernel(); }
+string System::Kernel() { return LinuxParser::Kernel(); }
 
 float System::MemoryUtilization() { return LinuxParser::MemoryUtilization(); }
 
-std::string System::OperatingSystem() { return  LinuxParser::OperatingSystem();}
+string System::OperatingSystem() { return  LinuxParser::OperatingSystem();}
 
 int System::RunningProcesses() { return LinuxParser::RunningProcesses(); }
 
