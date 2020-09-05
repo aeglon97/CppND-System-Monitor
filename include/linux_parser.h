@@ -19,6 +19,15 @@ const std::string kVersionFilename{"/version"};
 const std::string kOSPath{"/etc/os-release"};
 const std::string kPasswordPath{"/etc/passwd"};
 
+// File tokens
+const std::string filterProcesses("processes");
+const std::string filterProcsRunning("procs_running");
+const std::string filterVmData("VmData");
+const std::string filterUid("Uid");
+const std::string filterOS("PRETTY_NAME");
+const std::string filterMemTotal("MemTotal");
+const std::string filterMemFree("MemFree");
+
 // System
 float MemoryUtilization();
 long UpTime();

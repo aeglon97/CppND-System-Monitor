@@ -10,19 +10,23 @@
 using namespace std;
 
 //Function definitions
-map<string, int> MapProcInfo();
+map<string, int> ProcInfo();
 
 //Return the aggregate CPU utilization
 float Processor::Utilization() { 
-    map<std::string, int> prevMap = MapProcInfo();
+    map<std::string, int> prevMap = ProcInfo();
     sleep(1.00);
-    map<std::string, int> map = MapProcInfo();
+    map<std::string, int> map = ProcInfo();
 
     return Processor::CpuUtilization(prevMap, map);
 }
 
+void SetCpuValues(){
+
+}
+
 //Parse line into a hash table with processor info
-map<string, int> MapProcInfo() {
+map<string, int> ProcInfo() {
     map<string, int> result;
     string cpu;
     

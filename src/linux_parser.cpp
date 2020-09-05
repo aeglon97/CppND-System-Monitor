@@ -73,7 +73,7 @@ string LinuxParser::OperatingSystem() {
         std::replace(line.begin(), line.end(), '"', ' ');
         std::istringstream lineStream(line);
         while (lineStream >> key >> value) {
-          if (key == "PRETTY_NAME") {
+          if (key == filterOS) {
             std::replace(value.begin(), value.end(), '_', ' ');
             stream.close();
             return value;
@@ -148,11 +148,11 @@ float LinuxParser::MemoryUtilization() {
           return memUtil;
         }
 
-        if(key == "MemTotal") {
+        if(key == filterMemTotal) {
           memTotal = stof(value);
         }
 
-        if(key == "MemFree") {
+        if(key == filterMemFree) {
           memFree = stof(value);
         }
       }
@@ -179,12 +179,12 @@ long LinuxParser::UpTime() {
  }
 
 int LinuxParser::TotalProcesses() {
-  int totalProcesses = ParseValueByKey<int>(kProcDirectory + kStatFilename, "processes");
+  int totalProcesses = ParseValueByKey<int>(kProcDirectory + kStatFilename, LinuxParser::filterProcesses);
   return totalProcesses;
 }
 
 int LinuxParser::RunningProcesses() {
-  int runningProcesses = ParseValueByKey<int>(kProcDirectory + kStatFilename, "procs_running");
+  int runningProcesses = ParseValueByKey<int>(kProcDirectory + kStatFilename, filterProcsRunning);
   return runningProcesses;
 }
 
@@ -205,13 +205,13 @@ string LinuxParser::Command(const int pid) {
 
 //Used VmData instead of VmSize to account for physical RAM (instead of virtual RAM)
 float LinuxParser::Ram(const int pid) {
-  float ramKb = ParseValueByKey<float>(kProcProcessDirectory + to_string(pid) + kStatusFilename, "VmData");
+  float ramKb = ParseValueByKey<float>(kProcProcessDirectory + to_string(pid) + kStatusFilename, filterVmData);
   float ramMb = KbToMb(ramKb);
   return ramMb;
  }
 
 string LinuxParser::Uid(const int pid) { 
-  const string uid = ParseValueByKey<string>(kProcProcessDirectory + to_string(pid) + kStatusFilename, "Uid");
+  const string uid = ParseValueByKey<string>(kProcProcessDirectory + to_string(pid) + kStatusFilename, filterUid);
   return uid;
  }
 
