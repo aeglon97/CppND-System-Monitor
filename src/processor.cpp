@@ -24,11 +24,22 @@ float Processor::Utilization() {
 //Parse line into a hash table with processor info
 map<string, int> MapProcInfo() {
     map<string, int> result;
-
-    string line, cpu;
-    int user, nice, system, idle, ioWait, irq, softIrq, steal, guest, guestNice;
+    string cpu;
+    
+    int user;
+    int nice;
+    int system;
+    int idle;
+    int ioWait;
+    int irq;
+    int softIrq;
+    int steal;
+    int guest;
+    int guestNice;
 
     ifstream stream(LinuxParser::kProcDirectory + LinuxParser::kStatFilename);
+    string line;
+
     if (stream.is_open()) {
         getline(stream, line);
         std::istringstream linestream(line);

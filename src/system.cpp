@@ -17,7 +17,7 @@ using std::vector;
 
 //Set system processes upon initialization
 System::System() {
-    SetProcesses();
+    System::SetProcesses();
 }
 
 Processor& System::Cpu() { return cpu_; }

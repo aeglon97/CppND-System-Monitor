@@ -24,10 +24,12 @@ namespace fs = std::experimental::filesystem;
 
 //Parse file keys for generic values
 template<typename Type> Type ParseValueByKey(const string path, const string myKey) {
-  string line, key;
+  string key;
   Type value;
-
+  
   std::ifstream stream(path);
+  string line;
+
   if (stream.is_open()) {
     while (getline(stream, line)) {
       std::replace(line.begin(), line.end(), ':', ' ');
@@ -51,15 +53,19 @@ float KbToMb(float kb) {
 vector<string> LinuxParser::ParsedTokens(const string line) {
   std::istringstream buffer(line);
   std::istream_iterator<string> beg(buffer), end;
-  vector<string> tokens(beg, end);
 
+  vector<string> tokens(beg, end);
   return tokens;
 }
 
 //SYSTEM
 string LinuxParser::OperatingSystem() {
-  string line, key, value;
+  string key;
+  string value;
+
   std::ifstream stream(kOSPath); 
+  string line;
+
     if (stream.is_open()) {
       while (std::getline(stream, line)) {
         std::replace(line.begin(), line.end(), ' ', '_');
@@ -80,9 +86,13 @@ string LinuxParser::OperatingSystem() {
 }
 
 string LinuxParser::Kernel() {
-  string os, version, kernel;
-  string line;
+  string os;
+  string version;
+  string kernel;
+
   std::ifstream stream(kProcDirectory + kVersionFilename);
+  string line;
+
   if (stream.is_open()) {
     std::getline(stream, line);
     std::istringstream lineStream(line);
@@ -114,9 +124,17 @@ vector<int> LinuxParser::Pids() {
 }
 
 float LinuxParser::MemoryUtilization() { 
-  string line, key, value, kb;
-  float memTotal, memFree, memUtil;
+  string key;
+  string value;
+  string kb;
+
+  float memTotal;
+  float memFree;
+  float memUtil;
+
   std::ifstream stream(kProcDirectory + kMeminfoFilename);
+  string line;
+
   if (stream.is_open()) {
     while(std::getline(stream, line)) {
       std::replace(line.begin(), line.end(), ':', ' ');
@@ -145,9 +163,12 @@ float LinuxParser::MemoryUtilization() {
 }
 
 long LinuxParser::UpTime() { 
-  long upTime, idleTime;
-  string line;
+  long upTime;
+  long idleTime;
+
   std::ifstream stream(kProcDirectory + kUptimeFilename);
+  string line;
+  
   if (stream.is_open()){
     std::getline(stream, line);
     std::istringstream lineStream(line);
@@ -169,8 +190,9 @@ int LinuxParser::RunningProcesses() {
 
 //PROCESSES 
 string LinuxParser::Command(const int pid) { 
-  string line;
   std::ifstream stream(kProcProcessDirectory + to_string(pid) + kCmdlineFilename); 
+  string line;
+  
   if (stream.is_open()) {
     std::getline(stream, line);
     stream.close();
@@ -191,10 +213,14 @@ string LinuxParser::Uid(const int pid) {
  }
 
 string LinuxParser::User(const int pid) {
-  string line, username, x, uid;
+  string username;
+  string x;
+  string uid;
   const string myuid = Uid(pid);
 
   std::ifstream stream(kPasswordPath);
+  string line;
+
   if (stream.is_open()) {
     while(std::getline(stream, line)) {
       std::replace(line.begin(), line.end(), ':', ' ');
@@ -212,16 +238,17 @@ string LinuxParser::User(const int pid) {
 }
 
 long int LinuxParser::UpTime(const int pid) {
+  std::ifstream stream(kProcProcessDirectory + to_string(pid) + kStatFilename);
   string line;
 
-  std::ifstream stream(kProcProcessDirectory + to_string(pid) + kStatFilename);
   if(stream.is_open()) {
     std::getline(stream, line);
     stream.close();
   }
 
   vector<string> procInfo = ParsedTokens(line);
-  long unsigned int startTime;
+  long int startTime;
+
   try {
     startTime = stol(procInfo[21]);
   } catch (std::exception& e) {
@@ -229,6 +256,8 @@ long int LinuxParser::UpTime(const int pid) {
   }
 
   //Convert from clock ticks to seconds
-  long unsigned int upTime = LinuxParser::UpTime() - (startTime / sysconf(_SC_CLK_TCK));
+  startTime /= sysconf(_SC_CLK_TCK);
+
+  long int upTime = LinuxParser::UpTime() - startTime;
   return upTime;
 }

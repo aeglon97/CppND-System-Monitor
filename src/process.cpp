@@ -6,8 +6,6 @@
 #include <string>
 #include <vector>
 
-
-
 #include <unistd.h>
 
 #include "linux_parser.h"
@@ -18,7 +16,7 @@ using std::to_string;
 using std::vector;
 
 Process::Process(const int pid) : pid_(pid) {
-    SetCpuValues();
+    Process::SetCpuValues();
     cpuUtilization_ = CpuUtilization();
 }
 
@@ -53,8 +51,8 @@ bool Process::operator<(Process const& a) const {
 
 //Store /proc/[pid]/stat values in a vector
 vector<string> Process::CpuValues() {
-    string line;
     std::ifstream stream(LinuxParser::kProcProcessDirectory + to_string(pid_) + LinuxParser::kStatFilename);
+    string line;
 
     if(stream.is_open()) {
         std::getline(stream, line);

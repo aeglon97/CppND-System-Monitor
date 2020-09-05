@@ -24,4 +24,4 @@ string Format::RoundedFloat(const float num) {
     stringstream stream;
     stream << fixed << setprecision(2) << num;
     return stream.str();
-}
+}   
